@@ -1,24 +1,13 @@
 #!/bin/bash
 
-## run1
-#init=2022-06-09
-#fin=2022-07-09
+# start="2026-01-05"
+# end="2026-01-11"
 
-## run2
-#init=2022-12-20
-#fin=2023-03-06
+start="2025-10-16"
+end="2026-01-12"
 
-## run1 + run2
-#init=2022-06-09
-#fin=2023-03-06
-
-## weekly
-init=2023-03-06
-fin=2023-03-12
-
-python ParseDAQLog.py -i ${init} -f ${fin}
-python pot_account.py update-daily-pot ${init} ${fin} True
-python pot_account.py update-daily-runs ${init} ${fin} True
-python pot_account.py make-daq-plots ${init} ${fin}
-
+python ParseDAQLog.py -i ${start} -f ${end}
+python pot_account.py update-daily-pot ${start} ${end} True
+python pot_account.py update-daily-runs ${start} ${end} True
+python pot_account.py make-daq-plots ${start} ${end}
 
