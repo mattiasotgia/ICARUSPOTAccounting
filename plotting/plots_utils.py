@@ -19,7 +19,7 @@ plt.rcParams['font.size'] = 15
 
 def potEfficiency(df: pd.DataFrame, beam: str, range):
 
-  fig, axs = plt.subplots(figsize=(8, 5.5), nrows=2, height_ratios=[6, 2], sharex=True)
+  fig, axs = plt.subplots(figsize=(15, 4.5), nrows=2, height_ratios=[6, 2], sharex=True)
   fig.subplots_adjust(hspace=0.1)
   ax0, ax1 = axs
   
@@ -30,11 +30,11 @@ def potEfficiency(df: pd.DataFrame, beam: str, range):
   
   x = pd.to_datetime(df['day'], utc=True)
   y = df[f'pot_{beam}_delivered']/1000000
-  ax0.bar(x, y, align='center', width=1.0, label='Delivered', alpha=0.4)
+  ax0.bar(x, y, align='center', width=1, label='Delivered', color='mediumvioletred')
   ax0.set_ylim(0., 1.3*y.max())
 
   y=df[f'pot_{beam}_collected']/1000000
-  ax0.bar(x, y, align='center', width=1.0, label='Collected', alpha=0.6)
+  ax0.bar(x, y, align='center', width=1, label='Collected', color='mediumspringgreen')
 
   ax0.set_ylabel('$10^{18}$ POT/day', fontsize=16)
 
@@ -172,7 +172,7 @@ def intensityAndCumulativePot(df, beam, range):
   )
 
   if beam == 'bnb':
-    ax0.set_ylim((0.0, 6.0))
+    ax0.set_ylim((0.0, 6.5))
   if beam == "numi":
     ax0.set_ylim((0.0, 8.0))
   
