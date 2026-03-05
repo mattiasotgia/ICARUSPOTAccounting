@@ -12,7 +12,7 @@ from runinfo.read_run_info import insert_daily_runs, make_timestamp, get_day_ran
 
 # from plotting.plots_utils import makeCumulativePOTPlot
 
-from plotting.plots_utils import potEfficiency, potCumulative, daqEfficiency, intensityAndCumulativePot
+from plotting.plots_utils import potEfficiency, potCumulative, daqEfficiency, intensityAndCumulativePot, makeCumulativePOTPlot
 
 USER = os.environ['USER']
 potDir = os.environ['potDir']
@@ -167,6 +167,7 @@ def make_daq_plots( ctx, start_day="", end_day="" ):
     pot_run_collected["numi_intensity"] = pot_run_collected["pot_numi_delivered"]/ pot_run_collected["spill_numi_delivered"]*1E12
 
     pot_run_collected = pot_run_collected.sort_values('day')
+    pot_run_collected_alltime = pot_run_collected
 
     ## strip df by time range
 
@@ -234,15 +235,17 @@ def make_daq_plots( ctx, start_day="", end_day="" ):
         .savefig("fig/intensity_and_cumulative_pot_numi.pdf")
 
 
-    # plt = makeCumulativePOTPlot( 
-    #     pot_run_collected, 
-    #     ('2022-06-09', '2022-07-09'), 
-    #     ('2022-12-20', '2023-07-14'), 
-    #     ('2024-03-14', '2024-07-10'), 
-    #     ('2024-12-10', '2025-07-07'),
-    #     ('2025-10-16', '2026-01-05') )
-    # plt.savefig("fig/collected_both_for_wine_and_cheese.pdf")
-    # plt.show()
+    startDay, endDay = time_range
+
+    makeCumulativePOTPlot( 
+        pot_run_collected_alltime, 
+        ('2022-06-09', '2022-07-09'), 
+        ('2022-12-20', '2023-07-14'), 
+        ('2024-03-14', '2024-07-10'), 
+        ('2024-12-10', '2025-07-07'),
+        ('2025-10-16', endDay) 
+    )\
+        .savefig(f"fig/collected_both_up_to{endDay}.pdf")
     
     return
 

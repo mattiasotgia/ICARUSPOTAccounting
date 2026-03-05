@@ -16,6 +16,8 @@ import mplhep as hep
 
 plt.style.use(hep.style.DUNE)
 plt.rcParams['font.size'] = 15
+plt.rcParams['axes.xmargin'] = 0.05
+plt.rcParams['axes.ymargin'] = 0.05
 
 def potEfficiency(df: pd.DataFrame, beam: str, range):
 
@@ -528,107 +530,107 @@ def intensityAndCumulativePot(df, beam, range):
 
 #     return plt
 
-# def makeCumulativePOTPlot( df, rrun1, rrun2, rrun3, rrun4, rrun5 ):
+def makeCumulativePOTPlot( df, rrun1, rrun2, rrun3, rrun4, rrun5 ):
 
-#     fig, ax0 = plt.subplots( 1,1, figsize=(8, 5.5), sharey=True )
+    fig, ax0 = plt.subplots( 1,1, figsize=(18, 5.5), sharey=True )
 
-#     df["timeindex"] = pd.to_datetime( df["day"], utc=True )
+    df["timeindex"] = pd.to_datetime( df["day"], utc=True )
 
-#     _selNuMIRHC = (df.mode_numi == 'nubar') & ( df.timeindex > pd.to_datetime( rrun2[1], utc=True ) )
-#     _selNuMIFHC = (df.mode_numi == 'nu') | ( df.timeindex <= pd.to_datetime( rrun2[1], utc=True ) )
+    _selNuMIRHC = (df.mode_numi == 'nubar') & ( df.timeindex > pd.to_datetime( rrun2[1], utc=True ) )
+    _selNuMIFHC = (df.mode_numi == 'nu') | ( df.timeindex <= pd.to_datetime( rrun2[1], utc=True ) )
 
-#     df["pot_numi_rhc_collected"] = df['pot_numi_collected'].where(_selNuMIRHC,0)
-#     df["pot_numi_rhc_delivered"] = df['pot_numi_delivered'].where(_selNuMIRHC,0)
-#     df["pot_numi_fhc_collected"] = df['pot_numi_collected'].where(_selNuMIFHC,0)
-#     df["pot_numi_fhc_delivered"] = df['pot_numi_delivered'].where(_selNuMIFHC,0)
+    df["pot_numi_rhc_collected"] = df['pot_numi_collected'].where(_selNuMIRHC,0)
+    df["pot_numi_rhc_delivered"] = df['pot_numi_delivered'].where(_selNuMIRHC,0)
+    df["pot_numi_fhc_collected"] = df['pot_numi_collected'].where(_selNuMIFHC,0)
+    df["pot_numi_fhc_delivered"] = df['pot_numi_delivered'].where(_selNuMIFHC,0)
 
-#     _selBNBRHC = (df.mode_bnb == 'nubar')
-#     _selBNBFHC = (df.mode_bnb == 'nu')
-#     _selValidBNB = _selBNBRHC | _selBNBFHC
+    _selBNBRHC = (df.mode_bnb == 'nubar')
+    _selBNBFHC = (df.mode_bnb == 'nu')
+    _selValidBNB = _selBNBRHC | _selBNBFHC
 
-#     _selRUN1 = ( df.timeindex >= pd.to_datetime( rrun1[0], utc=True ) ) & ( df.timeindex <= pd.to_datetime( rrun1[1], utc=True ) )
-#     _selRUN2 = ( df.timeindex >= pd.to_datetime( rrun2[0], utc=True ) ) & ( df.timeindex <= pd.to_datetime( rrun2[1], utc=True ) )
-#     _selRUN3 = ( df.timeindex >= pd.to_datetime( rrun3[0], utc=True ) ) & ( df.timeindex <= pd.to_datetime( rrun3[1], utc=True ) )
-#     _selRUN4 = ( df.timeindex >= pd.to_datetime( rrun4[0], utc=True ) ) & ( df.timeindex <= pd.to_datetime( rrun4[1], utc=True ) )
-#     _selRUN5 = ( df.timeindex >= pd.to_datetime( rrun5[0], utc=True ) ) & ( df.timeindex <= pd.to_datetime( rrun5[1], utc=True ) )
+    _selRUN1 = ( df.timeindex >= pd.to_datetime( rrun1[0], utc=True ) ) & ( df.timeindex <= pd.to_datetime( rrun1[1], utc=True ) )
+    _selRUN2 = ( df.timeindex >= pd.to_datetime( rrun2[0], utc=True ) ) & ( df.timeindex <= pd.to_datetime( rrun2[1], utc=True ) )
+    _selRUN3 = ( df.timeindex >= pd.to_datetime( rrun3[0], utc=True ) ) & ( df.timeindex <= pd.to_datetime( rrun3[1], utc=True ) )
+    _selRUN4 = ( df.timeindex >= pd.to_datetime( rrun4[0], utc=True ) ) & ( df.timeindex <= pd.to_datetime( rrun4[1], utc=True ) )
+    _selRUN5 = ( df.timeindex >= pd.to_datetime( rrun5[0], utc=True ) ) & ( df.timeindex <= pd.to_datetime( rrun5[1], utc=True ) )
 
-#     # SELECT ONLY INSIDE THE THREE "RUN" PERIODS
-#     df = df[ _selRUN1 | _selRUN2 | _selRUN3 | _selRUN4 | _selRUN5 ]
+    # SELECT ONLY INSIDE THE THREE "RUN" PERIODS
+    df = df[ _selRUN1 | _selRUN2 | _selRUN3 | _selRUN4 | _selRUN5 ]
 
-#     x=df["timeindex"].values
+    x=df["timeindex"].values
 
-#     y=np.cumsum(df['pot_bnb_collected']/100000000)
-#     ys = y
-#     ax0.plot( x, y,'C1', linewidth=4.0, label="Total BNB $%.2f \\times 10^{20}$ POT" % np.max(y))
+    y=np.cumsum(df['pot_bnb_collected']/100000000)
+    ys = y
+    ax0.plot( x, y,'C2', linewidth=4.0, label="Total BNB $%.2f \\times 10^{20}$ POT" % np.max(y))
 
-#     y=np.cumsum(df['pot_numi_collected']/100000000)
-#     ys = np.append(ys,y)
-#     ax0.plot( x, y, 'C0', linewidth=4.0, label="Total NuMI $%.2f \\times 10^{20}$ POT" % np.max(y))
+    y=np.cumsum(df['pot_numi_collected']/100000000)
+    ys = np.append(ys,y)
+    ax0.plot( x, y, 'C1', linewidth=4.0, label="Total NuMI $%.2f \\times 10^{20}$ POT" % np.max(y))
 
-#     y=np.cumsum( df["pot_numi_rhc_collected"]/100000000 )
-#     ys = np.append(ys,y)
-#     ax0.plot( x, y, ':C0', linewidth=3.0,label="NuMI RHC $%.2f \\times 10^{20}$ POT" % np.max(y) )
+    y=np.cumsum( df["pot_numi_rhc_collected"]/100000000 )
+    ys = np.append(ys,y)
+    ax0.plot( x, y, ':C1', linewidth=3.0,label="NuMI RHC $%.2f \\times 10^{20}$ POT" % np.max(y) )
   
-#     y=np.cumsum( df["pot_numi_fhc_collected"]/100000000 )
-#     ys = np.append(ys,y)
-#     ax0.plot( x, y, "--C0", linewidth=3.0,label="NuMI FHC $%.2f \\times 10^{20}$ POT" % np.max(y) )
+    y=np.cumsum( df["pot_numi_fhc_collected"]/100000000 )
+    ys = np.append(ys,y)
+    ax0.plot( x, y, "--C1", linewidth=3.0,label="NuMI FHC $%.2f \\times 10^{20}$ POT" % np.max(y) )
 
-#     ax0.set_ylabel( "$10^{20}$ POT", fontsize=16 )
-#     #ax0.set_xlabel( "Day (UTC)", fontsize=16 )
+    ax0.set_ylabel( "$10^{20}$ POT", fontsize=16 )
+    #ax0.set_xlabel( "Day (UTC)", fontsize=16 )
 
-#     ax0.tick_params(axis="x",direction="in", bottom="on")
+    ax0.tick_params(axis="x",direction="in", bottom="on")
 
-#     if len(x)<=10:
-#       ax0.xaxis.set_major_locator(mdates.DayLocator(interval=1))
-#     ax0.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
+    if len(x)<=10:
+      ax0.xaxis.set_major_locator(mdates.DayLocator(interval=1))
+    ax0.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
 
-#     ax0.legend(fontsize=17fontsize=16, loc='upper left', edgecolor='none', facecolor='white', framealpha=0.8)
+    ax0.legend(fontsize=16, loc='upper left', edgecolor='none', facecolor='white', framealpha=0.8, frameon=True)
 
-#     ax0.set_xlim( pd.to_datetime( rrun1[0], utc=True ) - timedelta(days=15), pd.to_datetime( rrun5[1], utc=True ) + timedelta(days=15) )
-#     ax0.grid(alpha=0.5,linestyle="dashed")
+    ax0.set_xlim( pd.to_datetime( rrun1[0], utc=True ) - timedelta(days=15), pd.to_datetime( rrun5[1], utc=True ) + timedelta(days=15) )
+    ax0.grid(alpha=0.5,linestyle="dashed")
 
-#     # Run1 
-#     ax0.axvline( x=pd.to_datetime(rrun1[0], utc=True), linestyle="dashed",color="black")
-#     ax0.axvline( x=pd.to_datetime(rrun1[1], utc=True), linestyle="dashed",color="black")
-#     ax0.text(x=pd.to_datetime(rrun1[0], utc=True) + timedelta(days=3), y=1.25, s='Start RUN-1', rotation=90, 
-#              fontsize=12, va="bottom")
-#     ax0.text(x=pd.to_datetime(rrun1[1], utc=True) + timedelta(days=3), y=1.25, s='End RUN-1', rotation=90,
-#              fontsize=12, va="bottom")
+    # Run1 
+    ax0.axvline( x=pd.to_datetime(rrun1[0], utc=True), linestyle="dashed",color="black")
+    ax0.axvline( x=pd.to_datetime(rrun1[1], utc=True), linestyle="dashed",color="black")
+    ax0.text(x=pd.to_datetime(rrun1[0], utc=True) + timedelta(days=3), y=1.25, s='Start RUN-1', rotation=90, 
+             fontsize=12, va="bottom")
+    ax0.text(x=pd.to_datetime(rrun1[1], utc=True) + timedelta(days=3), y=1.25, s='End RUN-1', rotation=90,
+             fontsize=12, va="bottom")
 
-#     # Run2 
-#     ax0.axvline( x=pd.to_datetime(rrun2[0], utc=True), linestyle="dashed",color="black")
-#     ax0.axvline( x=pd.to_datetime(rrun2[1], utc=True), linestyle="dashed",color="black")
-#     ax0.text(x=pd.to_datetime(rrun2[0], utc=True) + timedelta(days=3), y=2.25, s='Start RUN-2', rotation=90,
-#             fontsize=12, va="bottom")
-#     ax0.text(x=pd.to_datetime(rrun2[1], utc=True) + timedelta(days=3), y=0.75, s='End RUN-2', rotation=90,
-#             fontsize=12, va="bottom")
+    # Run2 
+    ax0.axvline( x=pd.to_datetime(rrun2[0], utc=True), linestyle="dashed",color="black")
+    ax0.axvline( x=pd.to_datetime(rrun2[1], utc=True), linestyle="dashed",color="black")
+    ax0.text(x=pd.to_datetime(rrun2[0], utc=True) + timedelta(days=3), y=2.25, s='Start RUN-2', rotation=90,
+            fontsize=12, va="bottom")
+    ax0.text(x=pd.to_datetime(rrun2[1], utc=True) + timedelta(days=3), y=0.5, s='End RUN-2', rotation=90,
+            fontsize=12, va="bottom")
 
-#     # Run3 
-#     ax0.axvline( x=pd.to_datetime(rrun3[0], utc=True), linestyle="dashed",color="black")
-#     ax0.axvline( x=pd.to_datetime(rrun3[1], utc=True), linestyle="dashed",color="black")
-#     ax0.text(x=pd.to_datetime(rrun3[0], utc=True) + timedelta(days=3), y=4.25, s='Start RUN-3', rotation=90,
-#              fontsize=12, va="bottom")
-#     ax0.text(x=pd.to_datetime(rrun3[1], utc=True) + timedelta(days=3), y=4.25, s='End RUN-3', rotation=90,
-#              fontsize=12, va="bottom")
+    # Run3 
+    ax0.axvline( x=pd.to_datetime(rrun3[0], utc=True), linestyle="dashed",color="black")
+    ax0.axvline( x=pd.to_datetime(rrun3[1], utc=True), linestyle="dashed",color="black")
+    ax0.text(x=pd.to_datetime(rrun3[0], utc=True) + timedelta(days=3), y=4.25, s='Start RUN-3', rotation=90,
+             fontsize=12, va="bottom")
+    ax0.text(x=pd.to_datetime(rrun3[1], utc=True) + timedelta(days=3), y=4.25, s='End RUN-3', rotation=90,
+             fontsize=12, va="bottom")
     
-#     # Run4
-#     ax0.axvline( x=pd.to_datetime(rrun4[0], utc=True), linestyle="dashed",color="black")
-#     ax0.axvline( x=pd.to_datetime(rrun4[1], utc=True), linestyle="dashed",color="black")
-#     ax0.text(x=pd.to_datetime(rrun4[0], utc=True) + timedelta(days=3), y=0.75, s='Start RUN-4', rotation=90,
-#              fontsize=12, va="bottom")
-#     ax0.text(x=pd.to_datetime(rrun4[1], utc=True) + timedelta(days=3), y=0.75, s='End RUN-4', rotation=90,
-#              fontsize=12, va="bottom")
+    # Run4
+    ax0.axvline( x=pd.to_datetime(rrun4[0], utc=True), linestyle="dashed",color="black")
+    ax0.axvline( x=pd.to_datetime(rrun4[1], utc=True), linestyle="dashed",color="black")
+    ax0.text(x=pd.to_datetime(rrun4[0], utc=True) + timedelta(days=3), y=0.5, s='Start RUN-4', rotation=90,
+             fontsize=12, va="bottom")
+    ax0.text(x=pd.to_datetime(rrun4[1], utc=True) + timedelta(days=3), y=0.5, s='End RUN-4', rotation=90,
+             fontsize=12, va="bottom")
     
-#     # Run5
-#     ax0.axvline( x=pd.to_datetime(rrun5[0], utc=True), linestyle="dashed",color="black")
-#     # ax0.axvline( x=pd.to_datetime(rrun4[1], utc=True), linestyle="dashed",color="black")
-#     ax0.text(x=pd.to_datetime(rrun5[0], utc=True) + timedelta(days=3), y=0.75, s='Start RUN-5', rotation=90,
-#              fontsize=12, va="bottom")
-#     # ax0.text(x=pd.to_datetime(rrun4[1], utc=True) + timedelta(days=3), y=1, s='End RUN-4', rotation=90,
-#     #          fontsize=12, va="bottom")
+    # Run5
+    ax0.axvline( x=pd.to_datetime(rrun5[0], utc=True), linestyle="dashed",color="black")
+    # ax0.axvline( x=pd.to_datetime(rrun4[1], utc=True), linestyle="dashed",color="black")
+    ax0.text(x=pd.to_datetime(rrun5[0], utc=True) + timedelta(days=3), y=0.5, s='Start RUN-5', rotation=90,
+             fontsize=12, va="bottom")
+    # ax0.text(x=pd.to_datetime(rrun4[1], utc=True) + timedelta(days=3), y=1, s='End RUN-4', rotation=90,
+    #          fontsize=12, va="bottom")
 
-#     plt.tight_layout()
+    plt.tight_layout()
 
-#     print(df.head())
+    print(df.head())
 
-#     return plt
+    return plt

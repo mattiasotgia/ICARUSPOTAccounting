@@ -130,7 +130,7 @@ UpdateProd = args.prod
 
 dsnHost = "ccdapps-dev.fnal.gov" if UpdateDev else "ccdapps-prod.fnal.gov"
 dsnPort = 1535 if UpdateDev else 1539
-dsnServiceName = "ccdappsd" if UpdateDev else "ccdappsp"
+dsnServiceName = "ccdappsd.fnal.gov" if UpdateDev else "ccdappsp.fnal.gov"
 
 print("\n@@ Updadting %s"%(dsnHost))
 
