@@ -1,24 +1,18 @@
 import sys
 import click
-import numpy
 
 import numpy as np
 import pandas as pd
 
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-
 import os, sys
-import sqlite3 
 
-
-
-from beaminfo.simple_query import query_full_day, query_pot_interval
-from utils.dbmanager import add_day_pot_beam, create_connection, create_table, remove_run_day_pot, remove_day_pot_beam, remove_daily_collected_pot
+from beaminfo.simple_query import query_full_day
+from utils.dbmanager import add_day_pot_beam, create_connection, remove_day_pot_beam, remove_daily_collected_pot
 from runinfo.read_run_info import insert_daily_runs, make_timestamp, get_day_range
 
-from plotting.plots_utils import makePOTPlot, makePOTSumPlot, makeDAQEffPlot, makePOTPlotBoth
-from plotting.plots_utils import makePOTPlotRun, makePOTSumPlotRun, makeIntesityAndPOTSumPlot, makeDAQEffPlotRun, makePOTPlotBothRun
+# from plotting.plots_utils import makeCumulativePOTPlot
+
+from plotting.plots_utils import potEfficiency, potCumulative, daqEfficiency, intensityAndCumulativePot, makeCumulativePOTPlot
 
 USER = os.environ['USER']
 potDir = os.environ['potDir']
@@ -133,7 +127,6 @@ def update_daily_runs( ctx, start_day="", end_day="", override=False ):
 def make_daq_plots( ctx, start_day="", end_day="" ):
     """
     Make the daq plots with the new day information
-    TODO: select range
     """
 
     if start_day=="":
@@ -174,6 +167,7 @@ def make_daq_plots( ctx, start_day="", end_day="" ):
     pot_run_collected["numi_intensity"] = pot_run_collected["pot_numi_delivered"]/ pot_run_collected["spill_numi_delivered"]*1E12
 
     pot_run_collected = pot_run_collected.sort_values('day')
+    pot_run_collected_alltime = pot_run_collected
 
     ## strip df by time range
 
@@ -216,109 +210,72 @@ def make_daq_plots( ctx, start_day="", end_day="" ):
     print("        = %1.1f days"%( sumRunTime/3600./24. ) )
 
     # MAKE PLOTS, SAVE THEM 
-    plt = makePOTPlot(pot_run_collected, "bnb", time_range)
-    plt.savefig("fig/eff_pot_bnb.pdf")
+    potEfficiency(pot_run_collected, "bnb", time_range)\
+        .savefig("fig/eff_pot_bnb.pdf")
     
-    plt = makePOTPlot(pot_run_collected, "numi", time_range)
-    plt.savefig("fig/eff_pot_numi.pdf")
+    potEfficiency(pot_run_collected, "numi", time_range)\
+        .savefig("fig/eff_pot_numi.pdf")
+    
+    potCumulative(pot_run_collected, ["numi", "bnb"], time_range)\
+        .savefig("fig/cumulative_pot_numi_bnb.pdf")
+    
+    potCumulative(pot_run_collected, ["numi"], time_range)\
+        .savefig("fig/cumulative_pot_numi.pdf")
+    
+    potCumulative(pot_run_collected, ["bnb"], time_range)\
+        .savefig("fig/cumulative_pot_bnb.pdf")
 
-    plt = makePOTSumPlot( pot_run_collected, "bnb", time_range)
-    plt.savefig("fig/cumulative_pot_bnb.pdf")
+    daqEfficiency( pot_run_collected, time_range )\
+        .savefig("fig/eff_daq_numi_bnb.pdf")
+    
+    intensityAndCumulativePot( pot_run_collected, "bnb", time_range)\
+        .savefig("fig/intensity_and_cumulative_pot_bnb.pdf")
 
-    plt = makePOTSumPlot( pot_run_collected, "numi", time_range)
-    plt.savefig("fig/cumulative_pot_numi.pdf")
+    intensityAndCumulativePot( pot_run_collected, "numi", time_range)\
+        .savefig("fig/intensity_and_cumulative_pot_numi.pdf")
 
-    plt = makeIntesityAndPOTSumPlot( pot_run_collected, "bnb", time_range)
-    plt.savefig("fig/intensity_and_cumulative_pot_bnb.pdf")
 
-    plt = makeIntesityAndPOTSumPlot( pot_run_collected, "numi", time_range)
-    plt.savefig("fig/intensity_and_cumulative_pot_numi.pdf")
+    startDay, endDay = time_range
 
-    plt = makePOTPlotBoth( pot_run_collected, "numi", "bnb", time_range)
-    plt.savefig("fig/cumulative_pot_numi_bnb.pdf")
-
-    plt = makeDAQEffPlot( pot_run_collected, time_range )
-    plt.savefig("fig/eff_daq_numi_bnb.pdf")
-    plt.show()
+    makeCumulativePOTPlot( 
+        pot_run_collected_alltime, 
+        ('2022-06-09', '2022-07-09'), 
+        ('2022-12-20', '2023-07-14'), 
+        ('2024-03-14', '2024-07-10'), 
+        ('2024-12-10', '2025-07-07'),
+        ('2025-10-16', endDay) 
+    )\
+        .savefig(f"fig/collected_both_up_to{endDay}.pdf")
     
     return
 
 #######################################################################################################
 
-@cli.command("make-runbyrun-plots")
-@click.pass_context
-@click.argument("run")
+# @cli.command("make-runbyrun-plots")
+# @click.pass_context
+# @click.argument("run")
 
-def make_runbyrun_plots( ctx, run=""):
-    """
-    Make the daq plots with the new day information
-    TODO: select range
-    """
-    conn = create_connection("%s/dbase/run02_beaminfo.db"%(potDir))
+# def make_runbyrun_plots( ctx, run=""):
+#     """
+#     Make the daq plots with the new day information
+#     TODO: select range
+#     """
+#     conn = create_connection("%s/dbase/run02_beaminfo.db"%(potDir))
 
-    if conn is None:
-        print("FAILED CONNECTION")
+#     if conn is None:
+#         print("FAILED CONNECTION")
     
-    pot_daily_run=pd.read_sql( "SELECT * from run_day_pot", conn )
-    pot_run_=pd.read_sql( "SELECT * from run_pot", conn )
+#     pot_daily_run=pd.read_sql( "SELECT * from run_day_pot", conn )
+#     pot_run_=pd.read_sql( "SELECT * from run_pot", conn )
 
-    pot_run.to_csv('dumpbnb.csv')
-    conn.close()
+#     pot_run.to_csv('dumpbnb.csv')
+#     conn.close()
 
-    # DB Manipulation
-    pot_run_collected = pd.DataFrame(pot_run)
-    print(pot_run_collected[1]) 
-#    pot_run_collected.columns = [col_name[0] for col_name in pot_run_collected.columns.to_flat_index()]
+#     # DB Manipulation
+#     pot_run_collected = pd.DataFrame(pot_run)
+#     print(pot_run_collected[1]) 
     
-
-    # Merge BNB
-#    pot_run_collected = pot_run_collected.join( pot_daily_bnb.set_index("run"), on="run" ) 
-#   pot_run_collected.rename( columns={ "pot" : "pot_bnb_delivered"}, inplace=True )
-
-    
-
-    # Merge Numi
-#    pot_run_collected = pot_run_collected.join( pot_daily_numi.set_index("day"), on="day" ) 
-#    pot_run_collected.rename( columns={ "pot" : "pot_numi_delivered"}, inplace=True )
-
-
-#    pot_run_collected["ratio_bnb"] = pot_run_collected["pot_bnb_collected"] / pot_run_collected["pot_bnb_delivered"]
-#    pot_run_collected["ratio_numi"] = pot_run_collected["pot_numi_collected"] / pot_run_collected["pot_numi_delivered"]
-
-#    print("pot_bnb_collected = ",  np.median(pot_run_collected["pot_bnb_collected"]))
-#    print("pot_numi_collected = ", np.median(pot_run_collected["pot_numi_collected"]))
-
-#    print("pot_bnb_delivered = ",  np.median(pot_run_collected["pot_bnb_delivered"]))
-#    print("pot_numi_delivered = ", np.median(pot_run_collected["pot_numi_delivered"]))
-
-
-#    print("ratio_bnb = ",  np.median(pot_run_collected["ratio_bnb"]))
-#    print("ratio_numi = ", np.median(pot_run_collected["ratio_numi"]))
-#    print("runtime = ",  np.median(pot_run_collected["runtime"]))
-
-
-    # MAKE PLOTS, SAVE THEM 
-#    plt = makePOTPlotRun(pot_run_collected, "bnb", run)
-#    plt.savefig("fig/eff_pot_bnb.pdf")
-    
-#    plt = makePOTPlotRun(pot_run_collected, "numi", run)
-#    plt.savefig("fig/eff_pot_numi.pdf")
-
-#    plt = makePOTSumPlotRun( pot_run_collected, "bnb", run)
-#    plt.savefig("fig/cumsum_pot_bnb.pdf")
-
-#    plt = makePOTSumPlotRun( pot_run_collected, "numi", run)
-#    plt.savefig("fig/cumsum_pot_numi.pdf")
-
-#    plt = makePOTPlotBothRun( pot_run_collected, "numi", "bnb", run)
-#   plt.savefig("fig/cumsum_pot_numi_bnb.pdf")
-
-
-#    plt = makeDAQEffPlotRun( pot_run_collected, run )
-#    plt.savefig("fig/eff_daq_numi_bnb.pdf")
-#    plt.show()
-    
-    return
+#     return
 
 def main():
     cli(obj=dict())
