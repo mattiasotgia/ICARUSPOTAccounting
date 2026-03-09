@@ -14,20 +14,20 @@ The first step is to have`conda` running on the `icarusgpvm` servers. This is ne
 wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
 ```
 
-It is recomended you install the miniconda in your `/exp/icarus/app/user/$USER/` path, by passing `/exp/icarus/app/user/$USER/miniconda3/` when asked during the installation process, that you run with
+It is recomended you install the miniconda in your `/exp/icarus/app/users/$USER/` path, by passing `/exp/icarus/app/users/$USER/miniconda3/` when asked during the installation process, that you run with
 
 ```bash
 sh Miniforge3-$(uname)-$(uname -m).sh
 ```
 
-> **Important** You should pass the path without env. variables, so for example if your `$USER` was `johndoe` you would pass `/exp/icarus/app/user/johndoe/miniconda3/`.
+> **Important** You should pass the path without env. variables, so for example if your `$USER` was `johndoe` you would pass `/exp/icarus/app/user/johndoe/miniforge3/`.
 
 At this point in order to have the `conda` script available, you sould run the following command
 
 ```bash
-source /exp/icarus/app/user/$USER/miniconda3/etc/profile.d/conda.sh
+source /exp/icarus/app/user/$USER/miniforge3/etc/profile.d/conda.sh
 ```
-At this point you are able to create the `conda` environment.
+Now you are able to create the `conda` environment.
 
 ### 2. Creating the `conda` environment
 
@@ -45,10 +45,10 @@ conda activate runCo
 
 ### 3. Installing the needed software
 
-At this point you can install the required python pacakges with the command 
+You can install the required python packages with the command 
 
 ```bash
-pip install beautifulsoup4 Bottleneck brotli click cx_Oracle lxml mplhep numexpr pandas pyOpenSSL PyQt5 requests sip SQLAlchemy tornado wheel
+pip install beautifulsoup4 Bottleneck brotli click lxml mplhep numexpr pandas pyOpenSSL PyQt5 requests sip SQLAlchemy tornado wheel
 ```
 
 > **Note** This environment can be used also for the E-Log web scraping tools, described in [ascarpel/ELOGWebScraping](https://github.com/ascarpel/ELOGWebScraping). 
@@ -95,14 +95,14 @@ In that directory you are going to create a `setup.sh` file. This will be the sc
 To create the setup.sh script, start with the command
 
 ```bash 
-echo "source /exp/icarus/app/users/${USER}/miniconda3/etc/profile.d/conda.sh" > setup.sh
+echo "source /exp/icarus/app/users/${USER}/miniforge3/etc/profile.d/conda.sh" > setup.sh
 echo "conda activate runCo" >> setup.sh
 ```
 
 This will add the lines 
 
 ```bash
-source /exp/icarus/app/users/${USER}/miniconda3/etc/profile.d/conda.sh
+source /exp/icarus/app/users/${USER}/miniforge3/etc/profile.d/conda.sh
 conda activate runCo
 ```
 to the script.
@@ -132,7 +132,7 @@ cd $POT_DIR
 At this point you can clone this repository. Make sure to be in the `/exp/icarus/app/users/$(id -un)/runCo` path, and run 
 
 ```bash
-git clone https://github.com/jedori0228/ICARUSPOTAccounting.git potAccounting
+git clone https://github.com/mattiasotgia/ICARUSPOTAccounting.git potAccounting
 ```
 
 > **Remark** Please note that the directory where the repository will be cloned won't be named `ICARUSPOTAccounting`, but it will be named `potAccounting`
@@ -154,7 +154,7 @@ mkdir fig dbase
 
 Finally you will need to create an initial `.db` file. You can either
 1.  Create a new one with `python CreateDB.py`, or
-2.  Copy from existing one, for example 
+2.  Copy from existing one (**suggested** approach, will work most of the times), for example 
 ```bash
 cp /exp/icarus/app/users/msotgia/runCo/potAccounting/share/RunSummary.db ${potDir}/dbase/
 ```
