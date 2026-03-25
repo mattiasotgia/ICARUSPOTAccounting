@@ -20,12 +20,12 @@ It is recomended you install the miniconda in your `/exp/icarus/app/users/$USER/
 sh Miniforge3-$(uname)-$(uname -m).sh
 ```
 
-> **Important** You should pass the path without env. variables, so for example if your `$USER` was `johndoe` you would pass `/exp/icarus/app/user/johndoe/miniforge3/`.
+> **Important** You should pass the path without env. variables, so for example if your `$USER` was `johndoe` you would pass `/exp/icarus/app/user/johndoe/miniconda3/`.
 
 At this point in order to have the `conda` script available, you sould run the following command
 
 ```bash
-source /exp/icarus/app/user/$USER/miniforge3/etc/profile.d/conda.sh
+source /exp/icarus/app/user/$USER/miniconda3/etc/profile.d/conda.sh
 ```
 Now you are able to create the `conda` environment.
 
@@ -48,7 +48,7 @@ conda activate runCo
 You can install the required python packages with the command 
 
 ```bash
-pip install beautifulsoup4 Bottleneck brotli click lxml mplhep numexpr pandas pyOpenSSL PyQt5 requests sip SQLAlchemy tornado wheel
+pip install beautifulsoup4 Bottleneck brotli click lxml mplhep numexpr pandas pyOpenSSL PyQt5 requests sip SQLAlchemy tornado wheel oracledb pytz
 ```
 
 > **Note** This environment can be used also for the E-Log web scraping tools, described in [ascarpel/ELOGWebScraping](https://github.com/ascarpel/ELOGWebScraping). 
@@ -95,14 +95,14 @@ In that directory you are going to create a `setup.sh` file. This will be the sc
 To create the setup.sh script, start with the command
 
 ```bash 
-echo "source /exp/icarus/app/users/${USER}/miniforge3/etc/profile.d/conda.sh" > setup.sh
+echo "source /exp/icarus/app/users/${USER}/miniconda3/etc/profile.d/conda.sh" > setup.sh
 echo "conda activate runCo" >> setup.sh
 ```
 
 This will add the lines 
 
 ```bash
-source /exp/icarus/app/users/${USER}/miniforge3/etc/profile.d/conda.sh
+source /exp/icarus/app/users/${USER}/miniconda3/etc/profile.d/conda.sh
 conda activate runCo
 ```
 to the script.
@@ -149,14 +149,14 @@ source setup.sh
 You'll find yourself in the `potAccounting` directory. From there you'll want to create some directories that are needed for the scripts to work
 
 ```bash
-mkdir fig dbase
+mkdir dbase
 ```
 
 Finally you will need to create an initial `.db` file. You can either
 1.  Create a new one with `python CreateDB.py`, or
 2.  Copy from existing one (**suggested** approach, will work most of the times), for example 
 ```bash
-cp /exp/icarus/app/users/msotgia/runCo/potAccounting/share/RunSummary.db ${potDir}/dbase/
+cp /exp/icarus/app/users/msotgia/runCo/potAccounting/dbase/RunSummary.db ${potDir}/dbase/
 ```
 
 Now you're all set up, and the instruction are the same for the first and the other times, that you can find in the next section. 
