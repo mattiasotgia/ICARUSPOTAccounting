@@ -1,4 +1,4 @@
-import cx_Oracle
+import oracledb
 import sys, os
 import time
 import datetime
@@ -134,8 +134,8 @@ dsnServiceName = "ccdappsd.fnal.gov" if UpdateDev else "ccdappsp.fnal.gov"
 
 print("\n@@ Updadting %s"%(dsnHost))
 
-dsno = cx_Oracle.makedsn(dsnHost, dsnPort, service_name=dsnServiceName)
-conn_Fermi = cx_Oracle.connect(ICARUSACCOUNT, ICARUSPWD, dsno, encoding="UTF-8")
+dsn = f"{dsnHost}:{dsnPort}/{dsnServiceName}"
+conn_Fermi = oracledb.connect(user=ICARUSACCOUNT, password=ICARUSPWD, dsn=dsn)
 
 cur_Fermi = conn_Fermi.cursor()
 

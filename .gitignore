@@ -372,3 +372,4 @@ pyrightconfig.json
 .env/
 
 temp/
+dbase/
