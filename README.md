@@ -132,7 +132,7 @@ cd $POT_DIR
 At this point you can clone this repository. Make sure to be in the `/exp/icarus/app/users/$(id -un)/runCo` path, and run 
 
 ```bash
-git clone https://github.com/mattiasotgia/ICARUSPOTAccounting.git potAccounting
+git clone https://github.com/jedori0228/ICARUSPOTAccounting.git potAccounting
 ```
 
 > **Remark** Please note that the directory where the repository will be cloned won't be named `ICARUSPOTAccounting`, but it will be named `potAccounting`
